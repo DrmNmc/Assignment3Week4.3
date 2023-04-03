@@ -1,112 +1,241 @@
 ﻿using System;
 
-namespace OperatorOverloadingEx1
+namespace Assignment9ex2Operatoroverloading
 {
-    public class Calculator
+    public class Log
     {
-        public int number { get; set; }
+        public string Activity { get; set; }
+        public double Hours { get; set; }
+        public string? Category { get; set; }
 
-        //overload operators ++ and --
-        public static Calculator operator ++(Calculator c)
+        // overloaded operator ++ and operator --
+        public static Log operator ++(Log log)
         {
-            c.number += 1;
-            return c;
+            log.Hours += 1;
+            return log;
         }
 
-        public static Calculator operator --(Calculator c)
+        public static Log operator --(Log log)
         {
-            c.number -= 1;
-            return c;
+            log.Hours -= 1;
+            return log;
         }
 
-        //overload operators > and <
-        public static bool operator >(Calculator c1, Calculator c2)
+        // overloaded operator + and operator -
+        public static Log operator +(Log log, int hours)
         {
-            return c1.number > c2.number;
+            log.Hours += hours;
+            return log;
         }
 
-        public static bool operator <(Calculator c1, Calculator c2)
+        public static Log operator -(Log log, int hours)
         {
-            return c1.number < c2.number;
+            log.Hours -= hours;
+            return log;
         }
 
-        //overload operators + and -
-        public static Calculator operator +(Calculator c1, Calculator c2)
+        // overloaded operator > and operator <
+        public static bool operator >(Log log1, Log log2)
         {
-            return new Calculator { number = c1.number + c2.number };
+            return log1.Hours > log2.Hours;
         }
 
-        public static Calculator operator -(Calculator c1, Calculator c2)
+        public static bool operator <(Log log1, Log log2)
         {
-            return new Calculator { number = c1.number - c2.number };
+            return log1.Hours < log2.Hours;
         }
+    }
 
+    internal class Program
+    {
         static void Main(string[] args)
         {
-            Random r = new Random();
-            Calculator[] numbers = new Calculator[10];
-            Console.Write("Original Numbers= ");
-            for (int i = 0; i < numbers.Length; i++)
+            Log[] myLog = new Log[100];
+            for (int i = 0; i < myLog.Length; i++)
             {
-                numbers[i] = new Calculator();
-                numbers[i].number = r.Next(1, 100); 
-                Console.Write(" " + numbers[i].number);
+                myLog[i] = new Log();  // creates objects
             }
-            Console.WriteLine();
+            int selection = Menu();
+            int index = 0, entry = 0;
+            string ans = "";
+            while (selection != 6)
+            {
+                switch (selection)
+                {
+                    case 1:
+                        if (index < 100)
+                        {
+                            Console.Write("Activity Category (Fun, Work, Other): ");
+                            myLog[index].Category = Console.ReadLine();
+                            Console.WriteLine();
+                            Console.Write("Activity: ");
+                            myLog[index].Activity = Console.ReadLine();
+                            Console.WriteLine();
+                            Console.Write("Hours: ");
+                            myLog[index].Hours = double.Parse(Console.ReadLine());
+                            Console.WriteLine();
+                            index++;
+                        }
+                        else
+                            Console.WriteLine("You have too many log entries - see programming");
+                        break;
+                    case 2:
+                        for (int i = 0; i < myLog.Length; i++)
+                        {
+                            if (myLog[i].Activity != "" && myLog[i].Activity != null)
+                            {
+                                Console.WriteLine($"Category: {myLog[i].Category}");
+                                Console.WriteLine($"Activity: {myLog[i].Activity}");
+                                Console.WriteLine($"Hours: {myLog[i].Hours}");
+                            }
+                        }
+                        break;
+                    case 3:
+                        entry = pickEntry(index);
+                        Console.Write("Change Activity Category (Fun, Work, Other) Y for Yes ");
+                        ans = Console.ReadLine();
+                        if (ans == "Y" || ans == "y")
+                        {
+                            Console.Write("Category? ");
+                            myLog[entry].Category = Console.ReadLine();
+                        }
+                        Console.WriteLine();
+                        Console.Write("Change Activity Y for Yes ");
+                        ans = Console.ReadLine();
+                        if (ans == "Y" || ans == "y")
+                        {
+                            Console.Write("Activity: ");
+                            myLog[entry].Activity = Console.ReadLine();
+                        }
+                        Console.WriteLine();
+                        break;
+                    case 4:
+                        entry = pickEntry(index);
 
-            Console.Write("New Numbers +1 or -1= ");
-            for (int i = 0; i < numbers.Length; i++)
-            {
-                if (numbers[i].number % 2 == 0)
-                {
-                    numbers[i]++;
-                }
-                else
-                {
-                    numbers[i]--;
-                }
-                Console.Write(" " + numbers[i].number);
-            }
-            Console.WriteLine();
+                        Console.Write("Increase Hours by 1?  Y for Yes ");
+                        ans = Console.ReadLine();
+                        if (ans == "Y" || ans == "y")
+                        {
+                            myLog[entry]++;
+                            Console.WriteLine();
+                            break;
+                        }
 
-            Calculator numToAdd = new Calculator();
-            numToAdd.number = r.Next(1, 20);
-            Console.Write($"Numbers + {numToAdd.number} = ");
-            for (int i = 0; i < numbers.Length; i++)
-            {
-                Calculator result = numbers[i] + numToAdd;
-                Console.Write(" " + result.number);
-            }
-            Console.WriteLine();
+                        Console.Write("Decrease Hours by 1?  Y for Yes ");
+                        ans = Console.ReadLine();
+                        if (ans == "Y" || ans == "y")
+                        {
+                            myLog[entry]--;
+                            Console.WriteLine();
+                            break;
+                        }
 
-            Calculator numToSub = new Calculator();
-            numToSub.number = r.Next(1, 20);
-            Console.Write($"Numbers - {numToSub.number} = ");
-            for (int i = 0; i < numbers.Length; i++)
-            {
-                Calculator result = numbers[i] - numToSub;
-                Console.Write(" " + result.number);
-            }
-            Console.WriteLine();
+                        Console.Write("Increase Hours by > 1?  Y for Yes ");
+                        ans = Console.ReadLine();
+                        if (ans == "Y" || ans == "y")
+                        {
+                            Console.Write("Enter the hours: ");
+                            int hr;
+                            while (!int.TryParse(Console.ReadLine(), out hr))
+                                Console.WriteLine($"Please a number");
+                            myLog[entry] += hr;
+                            Console.WriteLine();
+                            break;
+                        }
 
-            Calculator numToCompare = new Calculator();
-            numToCompare.number = r.Next(1, 100);
-            Console.WriteLine($"Numbers above or below {numToCompare.number}");
-            for (int i = 0; i < numbers.Length; i++)
-            {
-                if (numbers[i] > numToCompare)
-                {
-                    Console.WriteLine($"{numbers[i].number} is higher.");
+                        Console.Write("Decrease Hours by > 1?  Y for Yes ");
+                        ans = Console.ReadLine();
+                        if (ans == "Y" || ans == "y")
+                        {
+                            Console.Write("Enter the hours: ");
+                            int hr;
+                            while (!int.TryParse(Console.ReadLine(), out hr))
+                                Console.WriteLine($"Please a number");
+                            myLog[entry] -= hr;
+                            Console.WriteLine();
+                            break;
+                        }
+
+                        break;
+                    case 5:
+                        Log totalFun = new Log();
+                        totalFun.Category = "Fun Category";
+                        totalFun.Activity = "Total Fun Hours";
+                        Log totalWork = new Log();
+                        totalWork.Category = "Work Category";
+                        totalWork.Activity = "Total Work Hours";
+                        Log totalOther = new Log();
+                        totalOther.Category = "Other Category";
+                        totalOther.Activity = "Total Other Hours";
+                        for (int i = 0; i < myLog.Length; i++)
+                        {
+                            switch (myLog[i].Category)
+                            {
+                                case "Fun":
+                                    totalFun.Hours += myLog[i].Hours;
+                                    break;
+                                case "Work":
+                                    totalWork.Hours += myLog[i].Hours;
+                                    break;
+                                case "Other":
+                                    totalOther.Hours += myLog[i].Hours;
+                                    break;
+                            }
+                        }
+                        Console.WriteLine("Total Hours by Category");
+                        if (totalFun > totalWork && totalFun > totalOther)
+                        {
+                            Console.WriteLine("The largest number of hours was spent on fun!");
+                            Console.WriteLine($"Your total fun hours = {totalFun.Hours}");
+                            Console.WriteLine($"Your total work hours = {totalWork.Hours}");
+                            Console.WriteLine($"Your total other hours = {totalOther.Hours}");
+                        }
+                        else if (totalWork > totalFun && totalWork > totalOther)
+                        {
+                            Console.WriteLine("The largest number of hours was spent on work");
+                            Console.WriteLine($"Your total work hours = {totalWork.Hours}");
+                            Console.WriteLine($"Your total fun hours = {totalFun.Hours}");
+                            Console.WriteLine($"Your total other hours = {totalOther.Hours}");
+                        }
+                        else
+                        {
+                            Console.WriteLine("The largest number of hours was spent on other activities");
+                            Console.WriteLine($"Your total other hours = {totalOther.Hours}");
+                            Console.WriteLine($"Your total work hours = {totalWork.Hours}");
+                            Console.WriteLine($"Your total fun hours = {totalFun.Hours}");
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("You made an invalid selection, please try again");
+                        break;
                 }
-                else if (numbers[i] < numToCompare)
-                {
-                    Console.WriteLine($"{numbers[i].number} is lower.");
-                }
-                else
-                {
-                    Console.WriteLine($"{numbers[i].number} is equal.");
-                }
+                selection = Menu();
+
             }
+        }
+        public static int Menu()
+        {
+            int choice = 0;
+            Console.WriteLine("Please make a selection from the menu");
+            Console.WriteLine("1 - Add an entry");
+            Console.WriteLine("2 - Print All");
+            Console.WriteLine("3 - Change category or activity");
+            Console.WriteLine("4 - Adjust hours");
+            Console.WriteLine("5 - Total categories and compare");
+            Console.WriteLine("6 - Quit");
+            while (!int.TryParse(Console.ReadLine(), out choice))
+                Console.WriteLine("Please select 1 - 6");
+            return choice;
+        }
+        public static int pickEntry(int index)
+        {
+            Console.WriteLine("What entry would you like to change?");
+            Console.WriteLine($"1 through {index}");
+            int entry;
+            while (!int.TryParse(Console.ReadLine(), out entry))
+                Console.WriteLine($"Please select 1 - {index}");
+            entry -= 1;  // subtract 1 to begin index at 0
+            return entry;
         }
     }
 }
