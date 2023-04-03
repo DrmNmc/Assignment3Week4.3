@@ -1,241 +1,56 @@
 ﻿using System;
 
-namespace Assignment9ex2Operatoroverloading
+namespace BankAccountExample
 {
-    public class Log
+    public class BankAccount
     {
-        public string Activity { get; set; }
-        public double Hours { get; set; }
-        public string? Category { get; set; }
+        public string AccountName { get; set; }
+        public double Balance { get; set; }
 
-        // overloaded operator ++ and operator --
-        public static Log operator ++(Log log)
+        public static BankAccount operator ++(BankAccount account)
         {
-            log.Hours += 1;
-            return log;
+            account.Balance += 1;
+            return account;
         }
 
-        public static Log operator --(Log log)
+        public static bool operator >(BankAccount acc1, BankAccount acc2)
         {
-            log.Hours -= 1;
-            return log;
+            return acc1.Balance > acc2.Balance;
         }
 
-        // overloaded operator + and operator -
-        public static Log operator +(Log log, int hours)
+        public static bool operator <(BankAccount acc1, BankAccount acc2)
         {
-            log.Hours += hours;
-            return log;
+            return acc1.Balance < acc2.Balance;
         }
 
-        public static Log operator -(Log log, int hours)
+        public static BankAccount operator +(BankAccount acc1, BankAccount acc2)
         {
-            log.Hours -= hours;
-            return log;
-        }
-
-        // overloaded operator > and operator <
-        public static bool operator >(Log log1, Log log2)
-        {
-            return log1.Hours > log2.Hours;
-        }
-
-        public static bool operator <(Log log1, Log log2)
-        {
-            return log1.Hours < log2.Hours;
+            return new BankAccount
+            {
+                AccountName = $"{acc1.AccountName} + {acc2.AccountName}",
+                Balance = acc1.Balance + acc2.Balance
+            };
         }
     }
 
-    internal class Program
+    class Program
     {
         static void Main(string[] args)
         {
-            Log[] myLog = new Log[100];
-            for (int i = 0; i < myLog.Length; i++)
-            {
-                myLog[i] = new Log();  // creates objects
-            }
-            int selection = Menu();
-            int index = 0, entry = 0;
-            string ans = "";
-            while (selection != 6)
-            {
-                switch (selection)
-                {
-                    case 1:
-                        if (index < 100)
-                        {
-                            Console.Write("Activity Category (Fun, Work, Other): ");
-                            myLog[index].Category = Console.ReadLine();
-                            Console.WriteLine();
-                            Console.Write("Activity: ");
-                            myLog[index].Activity = Console.ReadLine();
-                            Console.WriteLine();
-                            Console.Write("Hours: ");
-                            myLog[index].Hours = double.Parse(Console.ReadLine());
-                            Console.WriteLine();
-                            index++;
-                        }
-                        else
-                            Console.WriteLine("You have too many log entries - see programming");
-                        break;
-                    case 2:
-                        for (int i = 0; i < myLog.Length; i++)
-                        {
-                            if (myLog[i].Activity != "" && myLog[i].Activity != null)
-                            {
-                                Console.WriteLine($"Category: {myLog[i].Category}");
-                                Console.WriteLine($"Activity: {myLog[i].Activity}");
-                                Console.WriteLine($"Hours: {myLog[i].Hours}");
-                            }
-                        }
-                        break;
-                    case 3:
-                        entry = pickEntry(index);
-                        Console.Write("Change Activity Category (Fun, Work, Other) Y for Yes ");
-                        ans = Console.ReadLine();
-                        if (ans == "Y" || ans == "y")
-                        {
-                            Console.Write("Category? ");
-                            myLog[entry].Category = Console.ReadLine();
-                        }
-                        Console.WriteLine();
-                        Console.Write("Change Activity Y for Yes ");
-                        ans = Console.ReadLine();
-                        if (ans == "Y" || ans == "y")
-                        {
-                            Console.Write("Activity: ");
-                            myLog[entry].Activity = Console.ReadLine();
-                        }
-                        Console.WriteLine();
-                        break;
-                    case 4:
-                        entry = pickEntry(index);
+            BankAccount checkingAccount = new BankAccount { AccountName = "Checking", Balance = 1000 };
+            BankAccount savingsAccount = new BankAccount { AccountName = "Savings", Balance = 5000 };
 
-                        Console.Write("Increase Hours by 1?  Y for Yes ");
-                        ans = Console.ReadLine();
-                        if (ans == "Y" || ans == "y")
-                        {
-                            myLog[entry]++;
-                            Console.WriteLine();
-                            break;
-                        }
+            //using ++
+            checkingAccount++;
+            Console.WriteLine($"Checking account balance after using ++: {checkingAccount.Balance}");
 
-                        Console.Write("Decrease Hours by 1?  Y for Yes ");
-                        ans = Console.ReadLine();
-                        if (ans == "Y" || ans == "y")
-                        {
-                            myLog[entry]--;
-                            Console.WriteLine();
-                            break;
-                        }
+            //using > & <
+            Console.WriteLine($"Is the checking account balance greater than the savings account balance? {checkingAccount > savingsAccount}");
+            Console.WriteLine($"Is the checking account balance less than the savings account balance? {checkingAccount < savingsAccount}");
 
-                        Console.Write("Increase Hours by > 1?  Y for Yes ");
-                        ans = Console.ReadLine();
-                        if (ans == "Y" || ans == "y")
-                        {
-                            Console.Write("Enter the hours: ");
-                            int hr;
-                            while (!int.TryParse(Console.ReadLine(), out hr))
-                                Console.WriteLine($"Please a number");
-                            myLog[entry] += hr;
-                            Console.WriteLine();
-                            break;
-                        }
-
-                        Console.Write("Decrease Hours by > 1?  Y for Yes ");
-                        ans = Console.ReadLine();
-                        if (ans == "Y" || ans == "y")
-                        {
-                            Console.Write("Enter the hours: ");
-                            int hr;
-                            while (!int.TryParse(Console.ReadLine(), out hr))
-                                Console.WriteLine($"Please a number");
-                            myLog[entry] -= hr;
-                            Console.WriteLine();
-                            break;
-                        }
-
-                        break;
-                    case 5:
-                        Log totalFun = new Log();
-                        totalFun.Category = "Fun Category";
-                        totalFun.Activity = "Total Fun Hours";
-                        Log totalWork = new Log();
-                        totalWork.Category = "Work Category";
-                        totalWork.Activity = "Total Work Hours";
-                        Log totalOther = new Log();
-                        totalOther.Category = "Other Category";
-                        totalOther.Activity = "Total Other Hours";
-                        for (int i = 0; i < myLog.Length; i++)
-                        {
-                            switch (myLog[i].Category)
-                            {
-                                case "Fun":
-                                    totalFun.Hours += myLog[i].Hours;
-                                    break;
-                                case "Work":
-                                    totalWork.Hours += myLog[i].Hours;
-                                    break;
-                                case "Other":
-                                    totalOther.Hours += myLog[i].Hours;
-                                    break;
-                            }
-                        }
-                        Console.WriteLine("Total Hours by Category");
-                        if (totalFun > totalWork && totalFun > totalOther)
-                        {
-                            Console.WriteLine("The largest number of hours was spent on fun!");
-                            Console.WriteLine($"Your total fun hours = {totalFun.Hours}");
-                            Console.WriteLine($"Your total work hours = {totalWork.Hours}");
-                            Console.WriteLine($"Your total other hours = {totalOther.Hours}");
-                        }
-                        else if (totalWork > totalFun && totalWork > totalOther)
-                        {
-                            Console.WriteLine("The largest number of hours was spent on work");
-                            Console.WriteLine($"Your total work hours = {totalWork.Hours}");
-                            Console.WriteLine($"Your total fun hours = {totalFun.Hours}");
-                            Console.WriteLine($"Your total other hours = {totalOther.Hours}");
-                        }
-                        else
-                        {
-                            Console.WriteLine("The largest number of hours was spent on other activities");
-                            Console.WriteLine($"Your total other hours = {totalOther.Hours}");
-                            Console.WriteLine($"Your total work hours = {totalWork.Hours}");
-                            Console.WriteLine($"Your total fun hours = {totalFun.Hours}");
-                        }
-                        break;
-                    default:
-                        Console.WriteLine("You made an invalid selection, please try again");
-                        break;
-                }
-                selection = Menu();
-
-            }
-        }
-        public static int Menu()
-        {
-            int choice = 0;
-            Console.WriteLine("Please make a selection from the menu");
-            Console.WriteLine("1 - Add an entry");
-            Console.WriteLine("2 - Print All");
-            Console.WriteLine("3 - Change category or activity");
-            Console.WriteLine("4 - Adjust hours");
-            Console.WriteLine("5 - Total categories and compare");
-            Console.WriteLine("6 - Quit");
-            while (!int.TryParse(Console.ReadLine(), out choice))
-                Console.WriteLine("Please select 1 - 6");
-            return choice;
-        }
-        public static int pickEntry(int index)
-        {
-            Console.WriteLine("What entry would you like to change?");
-            Console.WriteLine($"1 through {index}");
-            int entry;
-            while (!int.TryParse(Console.ReadLine(), out entry))
-                Console.WriteLine($"Please select 1 - {index}");
-            entry -= 1;  // subtract 1 to begin index at 0
-            return entry;
+            //using +
+            BankAccount combinedAccount = checkingAccount + savingsAccount;
+            Console.WriteLine($"Combined account balance: {combinedAccount.Balance}");
         }
     }
 }
